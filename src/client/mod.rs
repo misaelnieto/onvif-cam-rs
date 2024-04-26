@@ -178,7 +178,11 @@ pub async fn send(onvif_url: url::Url, msg: Messages) -> Result<Response> {
     // Try to send the reqwest try_times (5)
     // with a 1sec timemout for each reqwest
     let soap_msg = soap_msg(&msg, uuid);
-    let client = reqwest::Client::new();
+    let client = reqwest::Client::builder()
+        .connection_verbose(true)
+        .danger_accept_invalid_certs(true)
+        .build()
+        .expect("Reqwest client builder should have succeeded");
 
     'read: loop {
         try_times += 1;
